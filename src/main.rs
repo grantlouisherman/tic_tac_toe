@@ -6,7 +6,7 @@ struct BoardPosition {
     column: usize,
 }
 fn is_game_over(board: [[&str; 3]; 3]) -> bool {
-    let board_positions = [
+    let board_positions_to_check = [
         // rows
         [
             BoardPosition { row: 0, column: 0 },
@@ -51,8 +51,8 @@ fn is_game_over(board: [[&str; 3]; 3]) -> bool {
             BoardPosition { row: 2, column: 0 },
         ],
     ];
-    for i in 0..board_positions.len() {
-        let current_positions = &board_positions[i];
+    for i in 0..board_positions_to_check.len() {
+        let current_positions = &board_positions_to_check[i];
         let mut last_value = "";
         for j in 0..current_positions.len() {
             let current_board_position = &current_positions[j];
@@ -79,21 +79,39 @@ fn is_game_over(board: [[&str; 3]; 3]) -> bool {
     return false;
 }
 
-fn main() {
-    let args: Vec<String> = env::args().collect();
-    let mut tic_tac_toe_board = [["", "", ""], ["", "", ""], ["", "", ""]];
-    println!("{}", is_game_over(tic_tac_toe_board));
-    let user_input_row = args[1].parse::<usize>().unwrap();
-    let user_input_column = args[2].parse::<usize>().unwrap();
-
-    for i in 0..tic_tac_toe_board.len() {
-        let row = tic_tac_toe_board[i];
+fn ai_choose_move(board: &mut [[&str; 3]; 3]) -> () {
+    for i in 0..board.len() {
+        let row = board[i];
         for j in 0..row.len() {
             let column = row[j];
-            if j == user_input_column && i == user_input_row {
-                tic_tac_toe_board[i][j] = "X"
+            if column.len() <= 0 {
+                board[i][j] = "O";
+                return;
             }
         }
     }
-    // println!("{:?}", tic_tac_toe_board);
+}
+fn main() {
+    let mut tic_tac_toe_board = [["", "", ""], ["", "", ""], ["", "", ""]];
+    println!("{}", is_game_over(tic_tac_toe_board));
+    loop {
+        if is_game_over(tic_tac_toe_board) {
+            break;
+        }
+        let args: Vec<String> = env::args().collect();
+        let user_input_row = args[1].parse::<usize>().unwrap();
+        let user_input_column = args[2].parse::<usize>().unwrap();
+
+        for i in 0..tic_tac_toe_board.len() {
+            let row = tic_tac_toe_board[i];
+            for j in 0..row.len() {
+                let column = row[j];
+                if j == user_input_column && i == user_input_row {
+                    tic_tac_toe_board[i][j] = "X"
+                }
+            }
+        }
+        ai_choose_move(&mut tic_tac_toe_board);
+        println!("{:?}", tic_tac_toe_board);
+    }
 }
