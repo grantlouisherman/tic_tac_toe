@@ -1,4 +1,5 @@
 use std::env;
+use std::io;
 
 #[derive(Debug)]
 struct BoardPosition {
@@ -94,13 +95,29 @@ fn ai_choose_move(board: &mut [[&str; 3]; 3]) -> () {
 fn main() {
     let mut tic_tac_toe_board = [["", "", ""], ["", "", ""], ["", "", ""]];
     println!("{}", is_game_over(tic_tac_toe_board));
+    let mut input = String::new();
+
+    // eventually take input continuously
+    let user_coordinates = match io::stdin().read_line(&mut input) {
+        Ok(_) => {
+            let split: Vec<&str> = input.split(",").collect();
+            println!("{:?}", split);
+        }
+        Err(error) => {
+            println!("error: {}", error);
+
+        },
+    };
+
     loop {
         if is_game_over(tic_tac_toe_board) {
             break;
         }
+
         let args: Vec<String> = env::args().collect();
         let user_input_row = args[1].parse::<usize>().unwrap();
         let user_input_column = args[2].parse::<usize>().unwrap();
+
 
         for i in 0..tic_tac_toe_board.len() {
             let row = tic_tac_toe_board[i];
