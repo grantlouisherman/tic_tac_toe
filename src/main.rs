@@ -94,40 +94,25 @@ fn ai_choose_move(board: &mut [[&str; 3]; 3]) -> () {
 }
 fn main() {
     let mut tic_tac_toe_board = [["", "", ""], ["", "", ""], ["", "", ""]];
-    println!("{}", is_game_over(tic_tac_toe_board));
-    let mut input = String::new();
-
-    // eventually take input continuously
-    let user_coordinates = match io::stdin().read_line(&mut input) {
-        Ok(_) => {
-            let split: Vec<&str> = input.split(",").collect();
-            println!("{:?}", split);
-        }
-        Err(error) => {
-            println!("error: {}", error);
-
-        },
-    };
 
     loop {
         if is_game_over(tic_tac_toe_board) {
             break;
         }
+        let mut user_row_input = String::new();
+        let mut user_column_input = String::new();
+        // take input continuously
+        println!("Input Row");
+        io::stdin().read_line(&mut user_row_input).expect("Failed to read line");
 
-        let args: Vec<String> = env::args().collect();
-        let user_input_row = args[1].parse::<usize>().unwrap();
-        let user_input_column = args[2].parse::<usize>().unwrap();
+        println!("Input Column");
+        io::stdin().read_line(&mut user_column_input).expect("Failed to read line");
 
+        let user_row: usize = user_row_input.trim().parse::<usize>().expect("HHHH");
+        let user_column: usize = user_column_input.trim().parse::<usize>().expect("HHHH");
 
-        for i in 0..tic_tac_toe_board.len() {
-            let row = tic_tac_toe_board[i];
-            for j in 0..row.len() {
-                let column = row[j];
-                if j == user_input_column && i == user_input_row {
-                    tic_tac_toe_board[i][j] = "X"
-                }
-            }
-        }
+        tic_tac_toe_board[user_row][user_column] = "X";
+
         ai_choose_move(&mut tic_tac_toe_board);
         println!("{:?}", tic_tac_toe_board);
     }
